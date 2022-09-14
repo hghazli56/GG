@@ -3,7 +3,9 @@
 DIRECTORY="/home/parallels/Desktop/"
 if [ -d "${DIRECTORY}" ]
 then
- 	echo "Directory $DIRECTORY exist." 
+ 	echo "Directory $DIRECTORY exists. test 1" 
+ 	
+ 	echo -e "Directory $DIRECTORY exists. test 1" | mutt -s "Testing alerts" at `date +%Y_%m_%d_%H:%M:%S` smhzahir@googlemail.com
 fi
 
 let start_time="$(date +%s)";
@@ -26,6 +28,5 @@ function start_timer(){
 }
  
 main
-
 
 
