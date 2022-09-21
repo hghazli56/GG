@@ -1,32 +1,54 @@
-#!/bin/bash
+# proxy needed for RocketChat to work with cron 
+readonly https_proxy="https://server.proxy.poise.homeoffice.local:8080"
+export https_proxy
 
-DIRECTORY="/home/parallels/Desktop/"
-if [ -d "${DIRECTORY}" ]
-then
- 	echo "Directory $DIRECTORY exists. test 1" 
- 	
- 	echo -e "Directory $DIRECTORY exists. test 1" | mutt -s "Testing alerts" at `date +%Y_%m_%d_%H:%M:%S` smhzahir@googlemail.com
+print_timestamp() {
+        now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+        echo -n "${now}"
+}
+
+set_mymessage() {
+  mymessage="${messagelevel} $(print_timestamp) ${SCRIPT_NAME}: ${mytext}"
+}
+
+rocketchat_submit() {
+
+        read -r -d '' payload << EOF
+         {
+          "username": "${1}",
+          "icon_emoji": "${2}",
+          "attachments": [ {
+           "title": "${3}",
+           "text": "${4}",
+           "color": "${5}"
+           } ]
+         }
+EOF
+
+        curl -k -X POST -H "Content-type: application/json" \
+        --data "${payload}" "${6}" >/dev/null 2>&1
+
+error_check=$?
+
+if [[ "${error_check}" != "0" ]]; then
+  echo "Error with Rocketchat submit function, please investigate." >&2
 fi
-
-let start_time="$(date +%s)";
- 
-function main(){
-  start_timer
-  exit 0
 }
- 
-function start_timer(){
-  while [ 1 ];
-  do
-    let current_time="$(date +%s)"
-    let seconds=$current_time-$start_time;
- 
-    echo -en "\r                                        \r"
-    printf "Timer: %02d:%02d:%02d:%02d" "$((seconds/86400))" "$((seconds/3600%24))" "$((seconds/60%60))" "$((seconds%60))" 
-    sleep 1;
-  done
-}
- 
-main
+
+test() {
+X=1
+
+        if [ "$X" -eq "1" ]; then
+         messagelevel="Alert"
+         mytext="No file has been created in the past 4 hours"
+         set_mymessage
+         rocketchat_submit "GGtest" ":warning:" "test" "${mymessage}" "Amber" "https://rocketchat.dsa.homeoffice.gov.uk/hooks/beWDxrQkfvnxBXpRf/yKBPdkcHtGTaZK7QPzGcivZncCyvgYL6SufPM3mvjFDu248a"
+         echo "${mymessage}" >&2
+         exit 10
+        fi
+
+	}
 
 
+echo "this code ran"
+test
