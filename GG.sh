@@ -1,5 +1,5 @@
 # proxy needed for RocketChat to work with cron 
-readonly https_proxy="https://server.proxy.poise.homeoffice.local:8080"
+readonly https_proxy="https://someurl"
 export https_proxy
 
 print_timestamp() {
