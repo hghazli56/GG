@@ -38,8 +38,8 @@ PROD=1
          messagelevel="Alert"
          mytext="No file has been created in the past 4 hours"
          set_mymessage
-         rocketchat_submit "GGtest" ":warning:" "test" "${mymessage}" "Amber" "https://rocketchat.dsa.homeoffice.gov.uk/hooks/beWDxrQkfvnxBXpRf/yKBPdkcHtGTaZK7QPzGcivZncCyvgYL6SufPM3mvjFDu248a"
-         echo "${mymessage}" >&2
+----webhook---
+echo "${mymessage}" >&2
          exit 10
         fi
 
